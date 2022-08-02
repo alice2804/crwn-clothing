@@ -1,8 +1,9 @@
 // @ts-ignore
 import {FirebaseError, initializeApp } from 'firebase/app';
 // @ts-ignore
-import {getAuth, signInWithRedirect, signInWithPopup, GoogleAuthProvider} from 'firebase/auth';
+import {getAuth, signInWithRedirect, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword} from 'firebase/auth';
 import {getFirestore, doc, getDoc, setDoc} from  'firebase/firestore'
+import SignIn from '../../routes/sign-in/sign-in.componnt';
 
 const firebaseConfig = {
     apiKey: "AIzaSyBRACf1foBFoFGDF6_YZ4MsDebxoxi1BPQ",
@@ -26,7 +27,9 @@ export const signInWithGoogleRedirect = () =>
 signInWithRedirect(auth, provider);
   export const db = getFirestore();
 
- export const createUserDocumentFromAuth = async(userAuth) =>{
+ export const createUserDocumentFromAuth = async(userAuth, additionalInformation ={}
+ ) =>{
+  if(!userAuth) return;
    // @ts-ignore
    const  userDoRef = doc(db, 'users', userAuth.uid);
 
@@ -46,6 +49,7 @@ signInWithRedirect(auth, provider);
             displayName,
             email,
             createdAt,
+            ...additionalInformation
         });
     } catch (error) {
         console.log('error creating the user', error.message);
@@ -56,3 +60,12 @@ signInWithRedirect(auth, provider);
 // @ts-ignore
 return  userDoRef;
  };
+
+ export const createAuthUserWithEmailAndPassword = async (email, password) => {
+  if (!email || !password) return;
+
+ return await createUserWithEmailAndPassword(auth, email, password);
+
+ };
+
+ export default SignIn;
